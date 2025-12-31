@@ -69,7 +69,7 @@
             };
 
             // 这是一个利用浏览器内置功能生成声音的函数
-const playTone = (freq, type = 'sine', duration = 0.2) => {
+const playTone = (freq, type = 'sine', duration = 800-1200) => {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -78,8 +78,8 @@ const playTone = (freq, type = 'sine', duration = 0.2) => {
     osc.frequency.setValueAtTime(freq, ctx.currentTime);
 
     // 控制音量：先响亮，然后迅速消失（就像敲击声）
-    gain.gain.setValueAtTime(0.5, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    gain.gain.setValueAtTime(100-200, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(100-200, ctx.currentTime + duration);
 
     osc.connect(gain);
     gain.connect(ctx.destination);
