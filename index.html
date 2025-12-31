@@ -88,6 +88,20 @@ const playTone = (freq, type = 'sine', duration = 800-1200) => {
     osc.stop(ctx.currentTime + duration);
 };
             <button
+                for (let i = 1; i <= 7; i++) {
+    setStatus(stages[i-1]);
+    
+    // 每次状态改变时，响一声
+    // 如果是最后一步(钻石/笛子出现)，响一个高音；平时响个低音
+    if (i === 7) {
+        playTone(880, 'sine', 0.8); // 这是一个清脆的高音 A5
+    } else {
+        playTone(220 + (i * 50), 'triangle', 0.1); // 逐渐升高的低音
+    }
+
+    await new Promise(r => setTimeout(r, 600));
+    // ... 后面的代码保持不变
+}
             const startRefinery = async () => {
                 if (isRunning) return;
                 setIsRunning(true);
