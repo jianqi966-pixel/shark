@@ -22,7 +22,7 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect } = React;
 
         const App = () => {
             const [step, setStep] = useState(0);
@@ -31,39 +31,38 @@
             const [status, setStatus] = useState("SYSTEM READY");
             const [aiMessage, setAiMessage] = useState("");
             const [isAiLoading, setIsAiLoading] = useState(false);
-            const apiKey = ""; // 运行时自动填充
+            const apiKey = ""; 
 
             const fetchGeminiFortune = async () => {
                 setIsAiLoading(true);
-                const systemPrompt = "你是一个极简主义的AI实验室助理。生成一句关于2026年新年好运的寄语。要求：极简、充满浪漫感、15字以内。例如：'2026 新的一年已为你去除霉运。'，'检测到2026年的幸运峰值。'";
-                const userQuery = "生成一条2026年新年好运脉冲。";
-
-                const fetchWithRetry = async (retries = 5, delay = 1000) => {
-                    try {
-                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                contents: [{ parts: [{ text: userQuery }] }],
-                                systemInstruction: { parts: [{ text: systemPrompt }] }
-                            })
-                        });
-                        const data = await response.json();
-                        return data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    } catch (error) {
-                        if (retries > 0) {
-                            await new Promise(r => setTimeout(r, delay));
-                            return fetchWithRetry(retries - 1, delay * 2);
-                        }
-                        throw error;
-                    }
-                };
+                // 预设祝福语，防止 API 失败
+                const fallbackMessages = [
+                    "检测到 2026 的幸运波段已完全覆盖你的坐标。",
+                    "2026：所有的坚持，终将重组成最璀璨的惊喜。",
+                    "量子感应显示，你即将开启一段极其闪耀的新旅程。",
+                    "无论世界如何重构，你始终是最珍贵的晶体。"
+                ];
+                
+                const systemPrompt = "你是一个极简主义的AI助手。生成一句关于2026年新年好运的寄语。要求：极简、充满科技浪漫感、15字以内。不要使用表情符号。";
+                const userQuery = "为我的朋友生成一条 2026 年新年好运预测。";
 
                 try {
-                    const message = await fetchWithRetry();
-                    setAiMessage(message);
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: userQuery }] }],
+                            systemInstruction: { parts: [{ text: systemPrompt }] }
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error();
+                    const data = await response.json();
+                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    setAiMessage(text || fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)]);
                 } catch (e) {
-                    setAiMessage("2026 必有好事发生。");
+                    // API 失败时显示本地预设
+                    setAiMessage(fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)]);
                 } finally {
                     setIsAiLoading(false);
                 }
@@ -92,38 +91,38 @@
 
             return (
                 <div className="min-h-screen flex items-center justify-center p-6 bg-[#030712]">
-                    <div className="w-full max-w-sm glass-panel rounded-[3rem] p-10 relative">
-                        <div className="flex justify-between items-start mb-12">
+                    <div className="w-full max-w-sm glass-panel rounded-[3rem] p-8 sm:p-10 relative">
+                        <div className="flex justify-between items-start mb-10">
                             <div>
-                                <h1 className="text-blue-500 font-bold text-xs tracking-[0.3em] mb-1 uppercase">Lab Status</h1>
+                                <h1 className="text-blue-500 font-bold text-[10px] tracking-[0.3em] mb-1 uppercase">Lab Status</h1>
                                 <div className="flex items-center space-x-2">
                                     <div className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-blue-500 animate-ping' : 'bg-green-500'}`}></div>
-                                    <span className="text-[10px] opacity-40 font-mono tracking-widest">{status}</span>
+                                    <span className="text-[9px] opacity-40 font-mono tracking-widest">{status}</span>
                                 </div>
                             </div>
-                            <div className="text-[24px] opacity-20 hover:opacity-100 transition-opacity">⚡</div>
+                            <div className="text-[20px] opacity-20">⚡</div>
                         </div>
 
-                        <div className="bg-white/[0.02] rounded-[2.5rem] py-16 mb-8 border border-white/5 flex flex-col items-center justify-center relative">
-                            <div className={`text-8xl mb-8 transition-all duration-1000 ${step === 7 ? 'diamond-glow scale-110' : 'scale-75 opacity-20 grayscale'}`}>
+                        <div className="bg-white/[0.02] rounded-[2.5rem] py-12 mb-8 border border-white/5 flex flex-col items-center justify-center relative">
+                            <div className={`text-7xl mb-6 transition-all duration-1000 ${step === 7 ? 'diamond-glow scale-110' : 'scale-75 opacity-20 grayscale'}`}>
                                 {step === 7 ? '💎' : '⌬'}
                             </div>
-                            <h2 className="text-xl font-bold tracking-[0.1em] text-white">
+                            <h2 className="text-lg font-bold tracking-[0.1em] text-white">
                                 {step === 7 ? "2026 GLITTERING" : "2025 CRUSHING"}
                             </h2>
                             
                             {step === 7 && (
-                                <div className="mt-8 px-6 w-full text-center">
+                                <div className="mt-8 px-6 w-full text-center min-h-[4rem] flex items-center justify-center">
                                     <p className="text-sm text-blue-100 font-light italic leading-relaxed typing-effect">
-                                        {isAiLoading ? "正在感应未来..." : aiMessage}
+                                        {isAiLoading ? "正在感应 2026 波段..." : aiMessage}
                                     </p>
                                 </div>
                             )}
                         </div>
 
-                        <div className="mb-10">
-                            <div className="flex justify-between mb-3 text-[10px] font-mono tracking-widest opacity-40">
-                                <span>RECONSTRUCTION PROGRESS</span>
+                        <div className="mb-10 px-2">
+                            <div className="flex justify-between mb-3 text-[9px] font-mono tracking-widest opacity-40">
+                                <span>RECONSTRUCTION</span>
                                 <span>{Math.round(progress)}%</span>
                             </div>
                             <div className="h-0.5 bg-white/5 rounded-full overflow-hidden">
@@ -131,16 +130,28 @@
                             </div>
                         </div>
 
-                        <button 
-                            onClick={startRefinery} 
-                            disabled={isRunning}
-                            className="w-full py-5 rounded-2xl bg-white text-black font-bold text-[10px] uppercase tracking-[0.3em] transition-all active:scale-[0.98] hover:bg-blue-50 disabled:bg-white/10 disabled:text-white/20"
-                        >
-                            {isRunning ? "Running..." : (step === 7 ? "✨ 感应 2026 好运 ✨" : "启动原子重组")}
-                        </button>
+                        <div className="space-y-3">
+                            <button 
+                                onClick={startRefinery} 
+                                disabled={isRunning}
+                                className="w-full py-5 rounded-2xl bg-white text-black font-bold text-[10px] uppercase tracking-[0.3em] transition-all active:scale-[0.98]"
+                            >
+                                {isRunning ? "Processing..." : (step === 7 ? "✨ 再次感应好运 ✨" : "启动原子重组")}
+                            </button>
+                            
+                            {step === 7 && !isRunning && (
+                                <button 
+                                    onClick={fetchGeminiFortune}
+                                    disabled={isAiLoading}
+                                    className="w-full py-3 rounded-xl border border-white/10 text-[9px] text-white/40 uppercase tracking-[0.2em] hover:bg-white/5"
+                                >
+                                    {isAiLoading ? "感应中..." : "重新捕捉脉冲"}
+                                </button>
+                            )}
+                        </div>
 
-                        <p className="mt-8 text-center text-[9px] opacity-20 tracking-widest font-mono">
-                            ENCRYPTED FOR 2026 NEW YEAR
+                        <p className="mt-8 text-center text-[8px] opacity-10 tracking-[0.4em] font-mono">
+                            ENCRYPTED FOR 2026
                         </p>
                     </div>
                 </div>
