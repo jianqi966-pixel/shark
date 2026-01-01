@@ -70,9 +70,9 @@
                         })
                     });
                     const data = await response.json();
-                    setAiMessage(data.candidates?.[0]?.content?.parts?.[0]?.text || "2026：所有的坚持，终将重组为属于你的璀璨。");
+                    setAiMessage(data.candidates?.[0]?.content?.parts?.[0]?.text || "2026 的璀璨已在你眼眸绽放。");
                 } catch (e) {
-                    setAiMessage("2026 的璀璨已在你眼眸绽放。");
+                    setAiMessage("2026: 所有的坚持,最后都会像钻石一样璀璨。");
                 }
             };
 
@@ -113,7 +113,7 @@
                         </div>
 
                         <h2 className="text-lg font-bold tracking-widest mb-3">
-                            {step === 7 ? "2026 璀璨绽放" : "2025 丢掉压力"}
+                            {step === 7 ? "2026 璀璨绽放" : "2025 鸭梨吃掉"}
                         </h2>
                         
                         <p className="text-blue-500 text-[10px] mb-10 tracking-[0.3em] font-bold h-4">
