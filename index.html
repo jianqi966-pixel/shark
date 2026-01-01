@@ -104,6 +104,28 @@
                     if (i === 7) {
                         window.confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#60a5fa', '#ffffff'] });
                         fetchGeminiFortune();
+                        if (i < 7) {
+                      // 这是“施压”阶段：声音比较低沉、短促
+                     // 200 + i*20 会让声音随着进度稍微变高一点点
+                       playTone(200 + (i * 20), 'triangle', 0.1); 
+                   } else {
+                      // 这是“钻石/笛子”出现阶段：声音清脆、悠长
+                       playTone(880, 'sine', 0.8); 
+                   }
+                   // ------------------
+
+                   await new Promise(r => setTimeout(r, 600));
+                   setStep(i);
+                   setProgress((i / 7) * 100);
+
+                  if (i === 7) {
+                       // 之前的 confetti 逻辑
+                      window.confetti({ ... });
+                       // 调用 Gemini AI
+                       fetchNewYearFortune();
+                    }
+               }
+           };
                     }
                 }
                 setIsRunning(false);
