@@ -68,19 +68,6 @@
                 }
             };
 
-             for (let i = 1; i <= 7; i++) {
-                        setStatus(stages[i-1]);
-                        
-              if (i < 7) {
-                  playTone(700, 'sine', 0.8); // 这是一个清脆的高音 A5
-              } else {
-                  playTone(100 + (i * 50), 'triangle', 0.1); // 逐渐升高的低音
-              }
-
-              await new Promise(r => setTimeout(r, 600));
-              // ... 后面的代码保持不变
-               }
-
                  // 这是一个利用浏览器内置功能生成声音的函数
      const playTone = (freq, type = 'sine', duration = 0.2) => {
          const ctx = new (window.AudioContext || window.webkitAudioContext)();
