@@ -10,27 +10,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { background: #020617; color: white; margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        body { background: #020617; color: white; margin: 0; font-family: sans-serif; overflow: hidden; }
         .lab-card { 
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
         }
-        .energy-orb {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(96, 165, 250, 0.15) 0%, transparent 70%);
-            z-index: 0;
-            pointer-events: none;
-        }
-        .icon-bounce { animation: bounce 2s infinite ease-in-out; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .glow-text { text-shadow: 0 0 10px rgba(96, 165, 250, 0.5); }
+        .glow-blue { filter: drop-shadow(0 0 20px #3b82f6); }
+        .pulse-slow { animation: pulse 3s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.8; } }
     </style>
 </head>
 <body>
@@ -41,7 +30,7 @@
         const App = () => {
             const [step, setStep] = useState(0);
             const [isRunning, setIsRunning] = useState(false);
-            const [status, setStatus] = useState("READY");
+            const [status, setStatus] = useState("SYSTEM READY");
             const [aiMessage, setAiMessage] = useState("");
             const audioCtxRef = useRef(null);
 
@@ -76,14 +65,14 @@
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: "写一句送给喜欢的女生的2026祝福语，浪漫且简短，15字以内。" }] }],
-                            systemInstruction: { parts: [{ text: "语气温柔。不带表情符号。" }] }
+                            contents: [{ parts: [{ text: "写一句送给喜欢的女生的2026祝福语，浪漫简短，15字以内。" }] }],
+                            systemInstruction: { parts: [{ text: "温柔语气，不带Emoji。" }] }
                         })
                     });
                     const data = await response.json();
-                    setAiMessage(data.candidates?.[0]?.content?.parts?.[0]?.text || "所有的压力，终将重组为属于你的璀璨。");
+                    setAiMessage(data.candidates?.[0]?.content?.parts?.[0]?.text || "2026：所有的坚持，终将重组为属于你的璀璨。");
                 } catch (e) {
-                    setAiMessage("2026 的璀璨已在你的眼眸中重组。");
+                    setAiMessage("2026 的璀璨已在你眼眸绽放。");
                 }
             };
 
@@ -94,7 +83,7 @@
                 setStep(0);
                 setAiMessage("");
                 
-                const stages = ["扫描原子", "压缩烦恼", "核心重组", "提取光芒", "注入希望", "晶体成型", "重组完成"];
+                const stages = ["SCANNING", "RELOADING", "COMPRESSING", "PURIFYING", "STABILIZING", "FORMING", "COMPLETED"];
                 
                 for (let i = 1; i <= 7; i++) {
                     setStatus(stages[i-1]);
@@ -112,35 +101,29 @@
             };
 
             return (
-                <div className="min-h-screen flex items-center justify-center p-8 bg-[#020617]">
-                    <div className="energy-orb"></div>
-                    
-                    <div className="w-full max-w-sm lab-card rounded-[3rem] p-10 text-center relative z-10">
-                        <div className="mb-12 opacity-25 text-[10px] tracking-[0.5em] font-light">
-                            QUANTUM LAB 2026
+                <div className="min-h-screen flex items-center justify-center p-6 bg-black">
+                    <div className="w-full max-w-sm lab-card rounded-[2.5rem] p-10 text-center relative border border-white/10">
+                        <div className="mb-10 opacity-20 text-[9px] tracking-[0.4em]">
+                            XIN HUI SPECIAL EDITION
                         </div>
 
-                        {/* 视觉核心区：换回 Emoji 但加上漂亮的光晕 */}
-                        <div className={`text-8xl mb-10 transition-all duration-1000 flex justify-center ${step === 7 ? 'scale-110 icon-bounce' : 'scale-75 opacity-20 grayscale'}`}>
-                            {step === 7 ? (
-                                <span style={{ filter: 'drop-shadow(0 0 20px rgba(96, 165, 250, 0.8))' }}>🪈</span>
-                            ) : (
-                                <span>🥁</span>
-                            )}
+                        {/* 核心显示：换成万能的钻石/星星 Emoji */}
+                        <div className={`text-7xl mb-10 transition-all duration-1000 ${step === 7 ? 'scale-125 glow-blue pulse-slow' : 'scale-75 opacity-20'}`}>
+                            {step === 7 ? '💎' : '🥁'}
                         </div>
 
-                        <h2 className={`text-xl font-bold tracking-widest mb-3 transition-colors ${step === 7 ? 'text-blue-400 glow-text' : 'text-white'}`}>
+                        <h2 className="text-lg font-bold tracking-widest mb-3">
                             {step === 7 ? "2026 璀璨绽放" : "2025 压力重组"}
                         </h2>
                         
-                        <p className="text-blue-500/80 text-[11px] mb-10 tracking-[0.2em] font-medium h-4">
+                        <p className="text-blue-500 text-[10px] mb-10 tracking-[0.3em] font-bold h-4">
                             {status}
                         </p>
 
-                        {step === 7 && aiMessage && (
-                            <div className="mb-10 p-6 rounded-3xl bg-blue-500/5 border border-blue-500/10 animate-fade-in">
-                                <p className="text-[13px] text-blue-100/90 leading-relaxed italic">
-                                    "{aiMessage}"
+                        {step === 7 && (
+                            <div className="mb-10 p-5 rounded-2xl bg-blue-500/5 border border-blue-500/10">
+                                <p className="text-sm italic text-blue-100/90 leading-relaxed">
+                                    {aiMessage ? `"${aiMessage}"` : "正在感应量子波段..."}
                                 </p>
                             </div>
                         )}
@@ -148,14 +131,10 @@
                         <button 
                             onClick={start} 
                             disabled={isRunning}
-                            className="w-full py-5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold text-[11px] tracking-[0.3em] uppercase active:scale-95 disabled:opacity-30 shadow-lg shadow-blue-900/20 transition-all"
+                            className="w-full py-5 rounded-2xl bg-white text-black font-bold text-[10px] tracking-[0.4em] active:scale-95 disabled:opacity-20 transition-all"
                         >
-                            {isRunning ? "PROCESSING..." : (step === 7 ? "RE-ACTIVATE" : "START REFINERY")}
+                            {isRunning ? "PROCESSING..." : "ACTIVATE"}
                         </button>
-
-                        <div className="mt-10 text-[9px] opacity-20 tracking-[0.1em] font-light">
-                            ENCRYPTED FOR XIN HUI
-                        </div>
                     </div>
                 </div>
             );
